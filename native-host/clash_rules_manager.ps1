@@ -122,22 +122,20 @@ function Get-ConfigPath {
         return $foundProfilePath
     }
 
-    # 3. 检查固定路径列表（兜底）
-    #    注意：clash-verge.yaml 是 Clash Verge Rev 的快照文件，重启后会丢失修改。
-    #    如果上面 profiles.yaml 解析失败，这里作为最终兜底。
-    foreach ($p in $DefaultConfigPaths) {
-        if (Test-Path $p) {
-            return $p
+    # 3. 在 profile 目录中递归搜索（优先于快照文件）
+    #    用户在 profiles 目录下手动创建的规则文件通常在这里
+    foreach ($dir in $ProfileSearchDirs) {
+        if (Test-Path $dir) {
+            $found = Get-ChildItem -Path $dir -Filter "*.yaml" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($found) { return $found.FullName }
         }
     }
 
-    # 4. 在 profile 目录中递归搜索（限制深度防无限循环）
-    foreach ($dir in $ProfileSearchDirs) {
-        if (Test-Path $dir) {
-            $found = Get-ChildItem -Path $dir -Filter "config.yaml" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($found) { return $found.FullName }
-            $found = Get-ChildItem -Path $dir -Filter "*.yaml" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($found) { return $found.FullName }
+    # 4. 检查固定路径列表（最后兜底）
+    #    注意：clash-verge.yaml 是 Clash Verge Rev 的快照文件，重启后会丢失修改。
+    foreach ($p in $DefaultConfigPaths) {
+        if (Test-Path $p) {
+            return $p
         }
     }
 

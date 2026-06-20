@@ -49,7 +49,7 @@
   "settings_secret": "API キー",
   "settings_proxy_host": "プロキシホスト",
   "settings_proxy_port": "プロキシポート",
-  "settings_config_path": "設定ファイルパス",
+  "settings_config_path": "書込設定ファイルパス",
   "settings_config_path_hint": "空白の場合は自動検出。変更後はClashを再起動してください。",
   "settings_detect": "自動検出",
   "settings_detect_fail": "設定ファイルが見つかりません",

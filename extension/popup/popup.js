@@ -23,6 +23,26 @@ function showToast(message, type = '') {
   setTimeout(() => toast.remove(), 2500);
 }
 
+/**
+ * 显示 Native Host 错误，优先展示具体错误信息
+ * @param {object} result - Native Host 返回结果
+ * @param {string} fallbackKey - 兜底 i18n key
+ */
+function showNativeError(result, fallbackKey) {
+  // 优先显示 Native Host 返回的具体错误
+  if (result && result.error) {
+    showToast(result.error, 'error');
+    return;
+  }
+  // 其次显示 background 返回的错误
+  if (result && result.message) {
+    showToast(result.message, 'error');
+    return;
+  }
+  // 最后用兜底文案
+  showToast(I18N.t(fallbackKey || 'error_native_host'), 'error');
+}
+
 // ──── F1 域名匹配算法（增强版：支持更多规则类型） ────
 
 function findMatchingRules(domain, rules) {
@@ -361,7 +381,7 @@ function bindQuickAddRule(domain) {
         renderDomainRuleCheck(domain, matched);
       }
     } else {
-      showToast(result?.error || I18N.t('error_native_host'), 'error');
+      showNativeError(result, 'error_native_host');
     }
   });
 }
@@ -464,7 +484,7 @@ function bindDomainDetection(tabId) {
         renderRuleList(rulesResult.rules);
       }
     } else {
-      showToast(result?.error || I18N.t('error_native_host'), 'error');
+      showNativeError(result, 'error_native_host');
     }
   });
 }
@@ -487,7 +507,7 @@ function bindRuleDeleteEvents() {
         renderDomainRuleCheck(domain, matched);
       }
     } else {
-      showToast(result?.error || I18N.t('error_native_host'), 'error');
+      showNativeError(result, 'error_native_host');
     }
   });
 }
@@ -531,9 +551,15 @@ function bindSettingsEvents() {
     await sendToBackground({ action: 'saveSettings', settings });
     // 如果用户手动设置了配置文件路径，同步到 Native Host
     if (configPath) {
-      await sendToBackground({ action: 'setConfigPath', path: configPath });
+      const pathResult = await sendToBackground({ action: 'setConfigPath', path: configPath });
+      if (pathResult && pathResult.success) {
+        showToast(I18N.t('settings_save') + ' — ' + I18N.t('settings_config_path') + ': ' + configPath, 'success');
+      } else {
+        showToast(I18N.t('settings_save') + ' — ' + (pathResult?.error || I18N.t('settings_detect_fail')), 'warn');
+      }
+    } else {
+      showToast(I18N.t('settings_save'), 'success');
     }
-    showToast(I18N.t('settings_save'), 'success');
     panel.classList.remove('open');
     await initPopup();
   });

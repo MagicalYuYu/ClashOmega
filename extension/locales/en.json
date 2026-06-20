@@ -49,7 +49,7 @@
   "settings_secret": "API Secret",
   "settings_proxy_host": "Proxy Host",
   "settings_proxy_port": "Proxy Port",
-  "settings_config_path": "Config File Path",
+  "settings_config_path": "Write Config File Path",
   "settings_config_path_hint": "Leave empty for auto-detect. Restart Clash after changing.",
   "settings_detect": "Auto Detect",
   "settings_detect_fail": "Config file not found",

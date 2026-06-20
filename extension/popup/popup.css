@@ -454,6 +454,9 @@ body {
 .toast--success {
   background: var(--md-status-on);
 }
+.toast--warn {
+  background: var(--md-sys-color-tertiary);
+}
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }

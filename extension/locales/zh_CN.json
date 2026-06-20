@@ -49,7 +49,7 @@
   "settings_secret": "API 密钥",
   "settings_proxy_host": "代理地址",
   "settings_proxy_port": "代理端口",
-  "settings_config_path": "配置文件路径",
+  "settings_config_path": "写入配置文件路径",
   "settings_config_path_hint": "留空则自动检测，修改后需重启 Clash 生效",
   "settings_detect": "自动检测",
   "settings_detect_fail": "未找到配置文件",
